@@ -1,6 +1,244 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
-st.title("🎈 My new app")
-st.write(
-    ""
-)
+# 1. Set page layout to wide so the table has room
+st.set_page_config(layout="wide", page_title="AI Periodic Table")
+
+st.title("The Periodic Table of AI")
+st.caption("Rendered from custom HTML/CSS")
+
+# 2. Paste your HTML code into a multi-line string
+# (I have included the full HTML generated previously below)
+html_code = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Periodic Table of AI</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --reactive-color: #ff6b6b;   /* Red/Salmon */
+            --retrieval-color: #feca57;  /* Yellow */
+            --orchestration-color: #1dd1a1; /* Green */
+            --validation-color: #5f27cd; /* Purple */
+            --models-color: #54a0ff;     /* Blue */
+            --card-bg: #2d3436;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 { margin-bottom: 10px; }
+        p { color: #b2bec3; margin-bottom: 30px; }
+
+        /* The Grid Container */
+        .periodic-table {
+            display: grid;
+            grid-template-columns: repeat(5, 120px); /* 5 Columns */
+            grid-template-rows: repeat(4, 120px);    /* 4 Rows */
+            gap: 10px;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        /* The Element Card */
+        .element {
+            background-color: var(--card-bg);
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .element:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            z-index: 10;
+        }
+
+        /* Internal Card Typography */
+        .number {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            align-self: flex-start;
+        }
+
+        .symbol {
+            font-size: 2.2rem;
+            font-weight: bold;
+            align-self: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .name {
+            font-size: 0.75rem;
+            text-align: center;
+            line-height: 1.1;
+            font-weight: 500;
+        }
+
+        /* Color Coding Classes */
+        .reactive { border-top: 4px solid var(--reactive-color); color: var(--reactive-color); }
+        .retrieval { border-top: 4px solid var(--retrieval-color); color: var(--retrieval-color); }
+        .orchestration { border-top: 4px solid var(--orchestration-color); color: var(--orchestration-color); }
+        .validation { border-top: 4px solid var(--validation-color); color: var(--validation-color); }
+        .models { border-top: 4px solid var(--models-color); color: var(--models-color); }
+
+        /* Specific Colors for Symbol Text override */
+        .reactive .symbol { color: var(--reactive-color); }
+        .retrieval .symbol { color: var(--retrieval-color); }
+        .orchestration .symbol { color: var(--orchestration-color); }
+        .validation .symbol { color: var(--validation-color); }
+        .models .symbol { color: var(--models-color); }
+        
+        /* Handling Empty Grid Spots */
+        .empty { visibility: hidden; pointer-events: none; }
+
+        /* Legend */
+        .legend {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        .dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>The Periodic Table of AI</h1>
+    <p>Based on IBM Technology's breakdown of AI elements</p>
+
+    <div class="periodic-table">
+        <div class="element reactive" title="Instructions given to an AI">
+            <span class="number">1</span>
+            <span class="symbol">Pr</span>
+            <span class="name">Prompt</span>
+        </div>
+        <div class="element retrieval" title="Numerical representations of meaning">
+            <span class="number">2</span>
+            <span class="symbol">Em</span>
+            <span class="name">Embeddings</span>
+        </div>
+        <div class="empty"></div> <div class="empty"></div> <div class="element models" title="Foundational Models (GPT, Claude, etc)">
+            <span class="number">5</span>
+            <span class="symbol">Lg</span>
+            <span class="name">LLMs</span>
+        </div>
+
+        <div class="element reactive" title="Calling external tools/APIs">
+            <span class="number">6</span>
+            <span class="symbol">Fc</span>
+            <span class="name">Function Calling</span>
+        </div>
+        <div class="element retrieval" title="Semantic search databases">
+            <span class="number">7</span>
+            <span class="symbol">Vx</span>
+            <span class="name">Vector DBs</span>
+        </div>
+        <div class="element orchestration" title="Retrieval Augmented Generation">
+            <span class="number">8</span>
+            <span class="symbol">Rg</span>
+            <span class="name">RAG</span>
+        </div>
+        <div class="element validation" title="Safety filters">
+            <span class="number">9</span>
+            <span class="symbol">Gr</span>
+            <span class="name">Guardrails</span>
+        </div>
+        <div class="element models" title="Text, Images, Audio combined">
+            <span class="number">10</span>
+            <span class="symbol">M</span>
+            <span class="name">Multi-modal</span>
+        </div>
+
+        <div class="element reactive" title="Autonomous think/act loops">
+            <span class="number">11</span>
+            <span class="symbol">Ag</span>
+            <span class="name">Agents</span>
+        </div>
+        <div class="element retrieval" title="Training on specific data">
+            <span class="number">12</span>
+            <span class="symbol">Ft</span>
+            <span class="name">Fine-tuning</span>
+        </div>
+        <div class="element orchestration" title="LangChain, LlamaIndex, etc">
+            <span class="number">13</span>
+            <span class="symbol">Fw</span>
+            <span class="name">Frameworks</span>
+        </div>
+        <div class="element validation" title="Adversarial testing">
+            <span class="number">14</span>
+            <span class="symbol">Rt</span>
+            <span class="name">Red Teaming</span>
+        </div>
+        <div class="element models" title="Distilled, efficient models">
+            <span class="number">15</span>
+            <span class="symbol">Sm</span>
+            <span class="name">Small Models</span>
+        </div>
+
+        <div class="element reactive" title="Collaborating agent swarms">
+            <span class="number">16</span>
+            <span class="symbol">Ma</span>
+            <span class="name">Multi-agent</span>
+        </div>
+        <div class="element retrieval" title="AI generating data for AI">
+            <span class="number">17</span>
+            <span class="symbol">Sy</span>
+            <span class="name">Synthetic Data</span>
+        </div>
+        <div class="empty"></div> <div class="element validation" title="Understanding the 'why'">
+            <span class="number">19</span>
+            <span class="symbol">In</span>
+            <span class="name">Interpretability</span>
+        </div>
+        <div class="element models" title="Chain of thought reasoning">
+            <span class="number">20</span>
+            <span class="symbol">Th</span>
+            <span class="name">Thinking Models</span>
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="dot" style="background:var(--reactive-color)"></div>Reactive</div>
+        <div class="legend-item"><div class="dot" style="background:var(--retrieval-color)"></div>Retrieval</div>
+        <div class="legend-item"><div class="dot" style="background:var(--orchestration-color)"></div>Orchestration</div>
+        <div class="legend-item"><div class="dot" style="background:var(--validation-color)"></div>Validation</div>
+        <div class="legend-item"><div class="dot" style="background:var(--models-color)"></div>Models</div>
+    </div>
+
+</body>
+</html>
+"""
+
+# 3. Render the HTML using the components module
+# height=600 ensures the full table is visible without internal scrollbars
+components.html(html_code, height=600, scrolling=True)
